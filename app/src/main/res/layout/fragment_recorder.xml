@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:voiceView="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="onClickListener"
+            type="android.view.View.OnClickListener" />
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Chronometer
+            android:id="@+id/timer"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_above="@+id/voicLine"
+            android:layout_marginBottom="20dp"
+            android:layout_centerHorizontal="true"
+            android:textSize="20sp"
+            />
+
+        <com.carlos.voiceline.mylibrary.VoiceLineView
+            android:id="@+id/voicLine"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_above="@+id/bt_replay"
+            android:layout_marginBottom="20dp"
+            android:background="@android:color/white"
+            voiceView:fineness="three"
+            voiceView:maxVolume="200"
+            voiceView:middleLine="@android:color/holo_red_light"
+            voiceView:middleLineHeight="1dp"
+            voiceView:rectSpace="2dp"
+            voiceView:rectWidth="5dp"
+            voiceView:sensibility="four"
+            voiceView:viewMode="line"
+            voiceView:voiceLine="@android:color/holo_red_light" />
+
+
+        <ImageButton
+            android:id="@+id/bt_replay"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_above="@+id/view_none"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="40dp"
+            android:layout_marginStart="35dp"
+            android:background="@drawable/btn_replay"
+            android:onClickListener="@{onClickListener}" />
+
+        <View
+            android:id="@+id/view_none"
+            android:layout_width="0px"
+            android:layout_height="0px"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+
+        <ImageButton
+            android:id="@+id/bt_recorder"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignTop="@+id/bt_replay"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/btn_record"
+            android:onClickListener="@{onClickListener}" />
+
+        <ImageButton
+            android:id="@+id/bt_save"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/bt_recorder"
+            android:layout_marginEnd="35dp"
+            android:background="@drawable/ic_stop_black_24dp"
+            android:onClickListener="@{onClickListener}" />
+
+
+    </RelativeLayout>
+</layout>
