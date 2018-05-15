@@ -20,6 +20,7 @@ import com.example.iris.recorder.api.audio.AudioCapturer;
 import com.example.iris.recorder.api.audio.AudioPlayer;
 import com.example.iris.recorder.api.wav.WavFileReader;
 import com.example.iris.recorder.api.wav.WavFileWriter;
+import com.example.iris.recorder.common.utils.Processor;
 import com.example.iris.recorder.databinding.FragmentRecorderBinding;
 
 import java.io.IOException;
@@ -34,10 +35,12 @@ public class RecorderFragment extends Fragment implements View.OnClickListener, 
     private AudioCapturer mAudioCapturer;
     private WavFileWriter mWavFileWriter;
 
-    private static final int SAMPLES_PER_FRAME = 1024;
+    //    private static final int SAMPLES_PER_FRAME = 1024;
     private AudioPlayer mAudioPlayer;
     private WavFileReader mWavFileReader;
     private volatile boolean mIsTestingExit = false;
+
+    private Processor mProcessor = new Processor(8000);
 
 
     private View mRoot;
@@ -115,12 +118,12 @@ public class RecorderFragment extends Fragment implements View.OnClickListener, 
 
     /**
      * 开始录音
-     * */
+     */
     private void startRecord() {
         mAudioCapturer = new AudioCapturer();
         mWavFileWriter = new WavFileWriter();
         try {
-            mWavFileWriter.openFile(DEFAULT_TEST_FILE, 44100, 1, 16);
+            mWavFileWriter.openFile(DEFAULT_TEST_FILE, 8000, 1, 16);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -131,7 +134,7 @@ public class RecorderFragment extends Fragment implements View.OnClickListener, 
 
     /**
      * 停止录音
-     * */
+     */
     private void stopRecord() {
         mAudioCapturer.stopCapture();
         try {
@@ -143,13 +146,14 @@ public class RecorderFragment extends Fragment implements View.OnClickListener, 
 
     /**
      * 开始播放
-     * */
+     */
     private void startAudioPlayer() {
         mWavFileReader = new WavFileReader();
         mAudioPlayer = new AudioPlayer();
 
         try {
             mWavFileReader.openFile(DEFAULT_TEST_FILE);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -178,7 +182,7 @@ public class RecorderFragment extends Fragment implements View.OnClickListener, 
 //            return;
 //        }
 
-        Toast.makeText(getActivity(),"保存路径为 "+DEFAULT_TEST_FILE,Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "保存路径为 " + DEFAULT_TEST_FILE, Toast.LENGTH_SHORT).show();
 
 
     }
@@ -186,10 +190,11 @@ public class RecorderFragment extends Fragment implements View.OnClickListener, 
     private Runnable AudioPlayRunnable = new Runnable() {
         @Override
         public void run() {
-            byte[] buffer = new byte[SAMPLES_PER_FRAME * 2];
+            byte[] buffer = new byte[mAudioCapturer.getMinBufferSize()];
             while (!mIsTestingExit && mWavFileReader.readData(buffer, 0, buffer.length) > 0) {
                 mAudioPlayer.play(buffer, 0, buffer.length);
 
+                //得到实时音量
                 int v = 0;
                 for (int i = 0; i < buffer.length; i++) {
                     v += buffer[i] * buffer[i];
@@ -229,8 +234,11 @@ public class RecorderFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onAudioFrameCaptured(byte[] audioData) {
+        mProcessor.processData(audioData);
         mWavFileWriter.writeData(audioData, 0, audioData.length);
 
+
+        //得到实时音量
         int v = 0;
         for (int i = 0; i < audioData.length; i++) {
             v += audioData[i] * audioData[i];
