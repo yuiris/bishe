@@ -10,7 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.Chronometer;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -29,7 +31,7 @@ import java.io.IOException;
  * Created by iris on 2018/4/17.
  */
 
-public class RecorderFragment extends Fragment implements View.OnClickListener, AudioCapturer.OnAudioFrameCapturedListener {
+public class RecorderFragment extends Fragment implements View.OnClickListener, AudioCapturer.OnAudioFrameCapturedListener, CompoundButton.OnCheckedChangeListener {
     private static final String DEFAULT_TEST_FILE = Environment.getExternalStorageDirectory() + "/test.wav";
 
     private AudioCapturer mAudioCapturer;
@@ -48,8 +50,10 @@ public class RecorderFragment extends Fragment implements View.OnClickListener, 
     private ImageButton mRecorderButton, mReplayButton, mSaveButton;
     private VoiceLineView mVoiceLineView;
     private Chronometer mChronometer;
+    private CheckBox mCbNoiseProcess;
     private boolean hasRecorderStart = false;
     private boolean hasReplayStart = false;
+    private boolean hasnoiseProcess = false;
 
     public static RecorderFragment getNewInstance() {
         return new RecorderFragment();
@@ -66,10 +70,28 @@ public class RecorderFragment extends Fragment implements View.OnClickListener, 
         mSaveButton = mRoot.findViewById(R.id.bt_save);
         mVoiceLineView = mRoot.findViewById(R.id.voicLine);
         mChronometer = mRoot.findViewById(R.id.timer);
+        mCbNoiseProcess = mRoot.findViewById(R.id.cb_noiseprocess);
+        mCbNoiseProcess.setOnCheckedChangeListener(this);
 
         return mRoot;
     }
 
+    /**
+     * 选框监听
+     */
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (isChecked) {
+            hasnoiseProcess = true;
+        } else {
+            hasnoiseProcess = false;
+        }
+
+    }
+
+    /**
+     * 点击监听
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -187,6 +209,9 @@ public class RecorderFragment extends Fragment implements View.OnClickListener, 
 
     }
 
+    /**
+     * 播放线程
+     */
     private Runnable AudioPlayRunnable = new Runnable() {
         @Override
         public void run() {
@@ -232,9 +257,15 @@ public class RecorderFragment extends Fragment implements View.OnClickListener, 
         }
     };
 
+    /**
+     * 声音抓取
+     */
     @Override
     public void onAudioFrameCaptured(byte[] audioData) {
-        mProcessor.processData(audioData);
+        //降噪
+        if (hasnoiseProcess == true) {
+            mProcessor.processData(audioData);
+        }
         mWavFileWriter.writeData(audioData, 0, audioData.length);
 
 

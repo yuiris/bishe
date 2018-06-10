@@ -19,13 +19,19 @@
             android:layout_above="@+id/voicLine"
             android:layout_marginBottom="20dp"
             android:layout_centerHorizontal="true"
-            android:textSize="20sp"
+            android:textSize="40sp"
             />
+        <CheckBox
+            android:id="@+id/cb_noiseprocess"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="降噪处理"
+            android:layout_above="@+id/voicLine"/>
 
         <com.carlos.voiceline.mylibrary.VoiceLineView
             android:id="@+id/voicLine"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="400dp"
             android:layout_above="@+id/bt_replay"
             android:layout_marginBottom="20dp"
             android:background="@android:color/white"

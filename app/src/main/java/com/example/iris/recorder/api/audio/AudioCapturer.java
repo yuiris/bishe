@@ -1,16 +1,4 @@
-/*
- *  COPYRIGHT NOTICE
- *  Copyright (C) 2016, Jhuster <lujun.hust@gmail.com>
- *  https://github.com/Jhuster/AudioDemo
- *
- *  @license under the Apache License, Version 2.0
- *
- *  @file    AudioCapturer.java
- *
- *  @version 1.0
- *  @author  Jhuster
- *  @date    2016/03/19
- */
+
 package com.example.iris.recorder.api.audio;
 
 import android.media.AudioFormat;
@@ -28,6 +16,7 @@ public class AudioCapturer {
     private static final String TAG = "AudioCapturer";
 
 
+    //声音获取来源
     private static final int DEFAULT_SOURCE = MediaRecorder.AudioSource.MIC;
     //采样频率
     private static final int DEFAULT_SAMPLE_RATE = 8000;
